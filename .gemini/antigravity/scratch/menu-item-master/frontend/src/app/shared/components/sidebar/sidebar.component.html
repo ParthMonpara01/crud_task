@@ -1,0 +1,40 @@
+<div class="sidebar bg-dark text-white d-flex flex-column h-100">
+  <div class="sidebar-header p-3 border-bottom border-secondary d-flex justify-content-between align-items-center">
+    <span class="fs-5 fw-bold text-truncate text-primary">
+      <i class="bi bi-shop me-2"></i>Masters Dashboard
+    </span>
+  </div>
+  
+  <div class="sidebar-content flex-grow-1 p-3">
+    <ul class="nav nav-pills flex-column mb-auto">
+      <li class="nav-item mb-2">
+        <a class="nav-link text-white d-flex justify-content-between align-items-center" (click)="toggleMenu()" style="cursor: pointer;">
+          <span>
+            <i class="bi bi-grid-fill me-2 text-info"></i>
+            Menu Item Master
+          </span>
+          <i class="bi" [ngClass]="isMenuOpen ? 'bi-chevron-down' : 'bi-chevron-right'"></i>
+        </a>
+        
+        <ul class="nav flex-column ms-3 mt-1" *ngIf="isMenuOpen">
+          <li class="nav-item mb-1">
+            <a class="nav-link text-secondary" routerLink="/menu-item-categories" routerLinkActive="active text-white bg-primary">
+              <i class="bi bi-bookmarks-fill me-2"></i>Categories
+            </a>
+          </li>
+          <li class="nav-item mb-1">
+            <a class="nav-link text-secondary" routerLink="/menu-items" routerLinkActive="active text-white bg-primary">
+              <i class="bi bi-journal-album me-2"></i>Menu Item
+            </a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+  
+  <div class="sidebar-footer p-3 border-top border-secondary mt-auto">
+    <button class="btn btn-outline-light w-100 d-flex align-items-center justify-content-center" (click)="addNewMaster()">
+      <i class="bi bi-plus-circle-fill me-2 text-success"></i>Add New Master
+    </button>
+  </div>
+</div>

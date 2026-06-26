@@ -1,0 +1,42 @@
+.sidebar {
+  width: 260px;
+  min-height: 100vh;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+
+.nav-link {
+  border-radius: 6px;
+  transition: all 0.2s ease-in-out;
+  padding: 10px 15px;
+  font-weight: 500;
+  user-select: none;
+}
+
+.nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #fff !important;
+}
+
+.nav-link.active {
+  background-color: #4f46e5 !important;
+  color: #fff !important;
+  box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.4);
+}
+
+.nav-link.text-secondary {
+  color: #cbd5e1 !important;
+}
+
+.nav-link.text-secondary:hover {
+  color: #fff !important;
+}
+
+.sidebar-header {
+  height: 60px;
+  background-color: #0f172a;
+}
+
+.sidebar-footer {
+  background-color: #0f172a;
+}

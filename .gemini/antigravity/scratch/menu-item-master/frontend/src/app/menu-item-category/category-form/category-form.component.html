@@ -1,0 +1,65 @@
+<div class="container p-4" style="max-width: 600px;">
+  <div class="mb-4">
+    <a routerLink="/menu-item-categories" class="text-decoration-none text-muted small d-flex align-items-center">
+      <i class="bi bi-arrow-left me-1"></i> Back to Categories List
+    </a>
+    <h2 class="h3 mt-2 fw-bold text-dark">{{ isEditMode ? 'Edit Category' : 'Create Category' }}</h2>
+    <p class="text-muted small">Fill out the fields to add or modify a category.</p>
+  </div>
+
+  <div class="card shadow-sm border-0">
+    <div class="card-body p-4">
+      <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()">
+        <!-- Category Name -->
+        <div class="mb-3">
+          <label for="name" class="form-label fw-semibold text-dark">Category Name <span
+              class="text-danger">*</span></label>
+          <input type="text" id="name" class="form-control" [class.is-invalid]="nameExists" placeholder="e.g. Appetizers" formControlName="name"
+            [ngClass]="{ 'is-invalid': name?.touched && name?.invalid }">
+          <div *ngIf="duplicateNameError" class="text-danger small mt-1">
+  {{ duplicateNameError }}
+</div>
+          <div class="invalid-feedback" *ngIf="name?.touched && name?.invalid">
+            <span *ngIf="name?.errors?.['required']">Category name is required.</span>
+            <span *ngIf="name?.errors?.['minlength']">Category name must be at least 2 characters.</span>
+            <span *ngIf="name?.errors?.['maxlength']">Category name cannot exceed 50 characters.</span>
+            <span *ngIf="name?.errors?.['pattern']">Whitespace-only values are not allowed.</span>
+            <span *ngIf="name?.errors?.['pattern']">Category name can contain only letters and spaces.</span>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="mb-3">
+          <label for="description" class="form-label fw-semibold text-dark">Description</label>
+          <textarea id="description" class="form-control" rows="3" placeholder="Describe this category..."
+            formControlName="description"
+            [ngClass]="{ 'is-invalid': description?.touched && description?.invalid }"></textarea>
+          <div class="invalid-feedback" *ngIf="description?.touched && description?.invalid">
+            <span *ngIf="description?.errors?.['maxlength']">Description cannot exceed 250 characters.</span>
+          </div>
+        </div>
+
+        <!-- Status Toggle -->
+        <div class="mb-4">
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="active" formControlName="active">
+            <label class="form-check-label fw-semibold text-dark" for="active">Active Status</label>
+          </div>
+          <small class="text-muted d-block mt-1">Inactive categories will not appear in the Menu Item category selection
+            dropdown.</small>
+        </div>
+
+        <!-- Form Action Buttons -->
+        <div class="d-flex justify-content-end gap-2 border-top pt-3">
+          <a routerLink="/menu-item-categories" class="btn btn-outline-secondary">Cancel</a>
+          <button type="submit" class="btn btn-primary"
+             [disabled]="categoryForm.invalid || duplicateNameError">
+            <span class="spinner-border spinner-border-sm me-1" *ngIf="submitting" role="status"
+              aria-hidden="true"></span>
+            {{ isEditMode ? 'Update Category' : 'Save Category' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
