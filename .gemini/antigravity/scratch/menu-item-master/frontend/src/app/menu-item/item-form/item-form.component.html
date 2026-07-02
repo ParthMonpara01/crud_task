@@ -3,7 +3,7 @@
     <a routerLink="/menu-items" class="text-decoration-none text-muted small d-flex align-items-center">
       <i class="bi bi-arrow-left me-1"></i> Back to Menu Items List
     </a>
-    <h2 class="h3 mt-2 fw-bold text-dark">{{ isEditMode ? 'Edit Menu Item' : 'Create Menu Item' }}</h2>
+    <h2 class="h3 mt-2 fw-bold text-dark">{{ isEditMode ? 'Edit Menu Itemfd' : 'Create Menu Item' }}</h2>
     <p class="text-muted small">Fill out the fields to add or modify a menu item.</p>
   </div>
 
@@ -11,109 +11,176 @@
     <div class="card-body p-4">
       <form [formGroup]="itemForm" (ngSubmit)="onSubmit()">
         <div class="row">
-          <!-- Item Name -->
+
+          <!-- Menu Item Name -->
           <div class="col-md-12 mb-3">
-            <label for="name" class="form-label fw-semibold text-dark">Menu Item Name <span
-                class="text-danger">*</span></label>
-            <input type="text" id="name" class="form-control form-control no-spinner" placeholder="e.g. Garlic Bread"
-              formControlName="name" [ngClass]="{ 'is-invalid': name?.touched && name?.invalid }"
-              [class.is-invalid]="duplicateNameError">
+            <label for="name" class="form-label fw-semibold">
+              Menu Item Name <span class="text-danger">*</span>
+            </label>
+
+            <input type="text" id="name" class="form-control" placeholder="e.g. Garlic Bread" formControlName="name"
+              [class.is-invalid]="name?.invalid && name?.touched">
+
             <div *ngIf="duplicateNameError" class="text-danger small mt-1">
               {{ duplicateNameError }}
             </div>
-            <div class="invalid-feedback" *ngIf="name?.touched && name?.invalid">
-              <span *ngIf="name?.errors?.['required']">Menu item name is required.</span>
-              <span *ngIf="name?.errors?.['minlength']">Menu item name must be at least 2 characters.</span>
-              <span *ngIf="name?.errors?.['maxlength']">Menu item name cannot exceed 100 characters.</span>
-              <span *ngIf="name?.errors?.['pattern']">Whitespace-only values are not allowed.</span>
-              <span *ngIf="name?.errors?.['pattern']">Category name can contain only letters and spaces.</span>
+
+            <div class="invalid-feedback" *ngIf="name?.invalid && name?.touched">
+
+              <div *ngIf="name?.errors?.['required']">
+                Menu Item Name is required.
+              </div>
+
+              <div *ngIf="name?.errors?.['minlength']">
+                Menu Item Name must contain at least 3 characters.
+              </div>
+
+              <div *ngIf="name?.errors?.['maxlength']">
+                Menu Item Name cannot exceed 50 characters.
+              </div>
+
+              <div *ngIf="name?.errors?.['pattern']">
+                Only letters and spaces are allowed.
+              </div>
+
             </div>
           </div>
 
           <!-- Slogan -->
           <div class="col-md-12 mb-3">
-            <label for="slogan" class="form-label fw-semibold text-dark">Slogan</label>
+
+            <label for="slogan" class="form-label fw-semibold">
+              Slogan
+            </label>
+
             <input type="text" id="slogan" class="form-control" placeholder="e.g. Crispy, buttery, garlic goodness"
-              formControlName="slogan" [ngClass]="{ 'is-invalid': slogan?.touched && slogan?.invalid }">
-            <div class="invalid-feedback" *ngIf="slogan?.touched && slogan?.invalid">
-              <span *ngIf="slogan?.errors?.['maxlength']">Slogan cannot exceed 150 characters.</span>
+              formControlName="slogan" [class.is-invalid]="slogan?.invalid && slogan?.touched">
+
+            <div class="invalid-feedback" *ngIf="slogan?.invalid && slogan?.touched">
+
+              <div *ngIf="slogan?.errors?.['maxlength']">
+                Slogan cannot exceed 100 characters.
+              </div>
+
             </div>
+
           </div>
 
-          <!-- Price & Category -->
+          <!-- Price -->
           <div class="col-md-6 mb-3">
-            <label for="price" class="form-label fw-semibold text-dark">Price <span class="text-danger">*</span></label>
-            <input type="number" formControlName="price" class="form-control"
-              [class.is-invalid]="itemForm.get('price')?.invalid &&itemForm.get('price')?.touched">
-            <div *ngIf="
-    itemForm.get('price')?.invalid &&
-    itemForm.get('price')?.touched
-  " class="text-danger small mt-1">
 
-              <div *ngIf="itemForm.get('price')?.errors?.['required']">
+            <label for="price" class="form-label fw-semibold">
+              Price <span class="text-danger">*</span>
+            </label>
+
+            <input id="price" type="number" class="form-control" formControlName="price" step="0.01" min="0.01"
+              placeholder="Enter Price" [class.is-invalid]="price?.invalid && price?.touched"
+              (input)="onPriceInput($event)" (keydown)="blockInvalidKeys($event)">
+
+            <div class="invalid-feedback d-block" *ngIf="price?.invalid && price?.touched">
+              <div class="invalid-feedback d-block" *ngIf="price?.errors?.['pattern'] && price?.touched">
+
+                Price can have up to 6 digits before the decimal and 2 digits after the decimal.
+
+              </div>
+
+              <div *ngIf="price?.errors?.['required']">
                 Price is required.
               </div>
 
-              <div *ngIf="itemForm.get('price')?.errors?.['pattern']">
+              <div *ngIf="price?.errors?.['pattern']">
                 Only numeric values are allowed.
               </div>
 
-              <div *ngIf="itemForm.get('price')?.errors?.['min']">
+              <div *ngIf="price?.errors?.['min']">
                 Price must be at least ₹1.
               </div>
 
-              <div *ngIf="itemForm.get('price')?.errors?.['max']">
-                Price cannot exceed 99999.
+              <div *ngIf="price?.errors?.['max']">
+                Price cannot exceed ₹99999.
               </div>
 
             </div>
+
           </div>
 
+          <!-- Category -->
           <div class="col-md-6 mb-3">
-            <label for="menuItemCategoryId" class="form-label fw-semibold text-dark">Category <span
-                class="text-danger">*</span></label>
+
+            <label for="menuItemCategoryId" class="form-label fw-semibold">
+              Category <span class="text-danger">*</span>
+            </label>
+
             <select id="menuItemCategoryId" class="form-select" formControlName="menuItemCategoryId"
-              [ngClass]="{ 'is-invalid': menuItemCategoryId?.touched && menuItemCategoryId?.invalid }">
-              <option value="" disabled selected>Select Category</option>
+              [class.is-invalid]="menuItemCategoryId?.invalid && menuItemCategoryId?.touched">
+
+              <option value="" disabled>Select Category</option>
+
               <option *ngFor="let cat of categories" [value]="cat.id">
                 {{ cat.name }} {{ cat.active ? '' : '(Inactive)' }}
               </option>
+
             </select>
-            <div class="invalid-feedback" *ngIf="menuItemCategoryId?.touched && menuItemCategoryId?.invalid">
-              Category selection is mandatory.
+
+            <div class="invalid-feedback" *ngIf="menuItemCategoryId?.invalid && menuItemCategoryId?.touched">
+
+              <div *ngIf="menuItemCategoryId?.errors?.['required']">
+                Please select a category.
+              </div>
+
             </div>
+
           </div>
 
           <!-- Description -->
           <div class="col-md-12 mb-3">
-            <label for="description" class="form-label fw-semibold text-dark">Description</label>
-            <textarea id="description" class="form-control" rows="4"
-              placeholder="Enter menu item ingredients, details..." formControlName="description"
-              [ngClass]="{ 'is-invalid': description?.touched && description?.invalid }"></textarea>
-            <div class="invalid-feedback" *ngIf="description?.touched && description?.invalid">
-              <span *ngIf="description?.errors?.['maxlength']">Description cannot exceed 250 characters.</span>
+
+            <label for="description" class="form-label fw-semibold">
+              Description
+            </label>
+
+            <textarea id="description" rows="4" class="form-control" placeholder="Enter menu item description..."
+              formControlName="description" [class.is-invalid]="description?.invalid && description?.touched">
+            </textarea>
+
+            <div class="invalid-feedback" *ngIf="description?.invalid && description?.touched">
+
+              <div *ngIf="description?.errors?.['maxlength']">
+                Description cannot exceed 250 characters.
+              </div>
+
             </div>
+
           </div>
 
-          <!-- Status toggle -->
-          <div class="col-md-12 mb-4">
-            <div class="form-check form-switch">
-              
-            </div>
-          </div>
         </div>
 
-        <!-- Form Action Buttons -->
+        
+
+        <!-- Buttons -->
         <div class="d-flex justify-content-end gap-2 border-top pt-3">
-          <a routerLink="/menu-items" class="btn btn-outline-secondary">Cancel</a>
+          
+          <a routerLink="/menu-items" (click)="cancel()" class="btn btn-outline-secondary">
+            Cancel
+          </a>
+
           <button type="submit" class="btn btn-primary"
-            [disabled]="itemForm.invalid || duplicateNameError">
-            <span class="spinner-border spinner-border-sm me-1" *ngIf="submitting" role="status"
-              aria-hidden="true"></span>
+            [disabled]="itemForm.invalid || submitting || !!duplicateNameError">
+
+            <span *ngIf="submitting" class="spinner-border spinner-border-sm me-2" role="status">
+            </span>
+
             {{ isEditMode ? 'Update Item' : 'Save Item' }}
+
           </button>
+
         </div>
+
       </form>
     </div>
   </div>
 </div>
+
+ <button type="button" (click)="onDraftButtonClick()">
+      Draft <span *ngIf="draftCount > 0">(+{{ draftCount }})</span>
+    </button>

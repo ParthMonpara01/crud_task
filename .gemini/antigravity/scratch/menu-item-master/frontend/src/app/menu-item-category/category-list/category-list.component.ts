@@ -82,9 +82,6 @@ export class CategoryListComponent implements OnInit {
       },
 
       error:(err)=>{
-
-        console.error(err);
-
         this.toastService.showError(
           err.error?.message || MessageConstants.ERROR_LOADING_CATEGORY
         );
@@ -136,7 +133,6 @@ export class CategoryListComponent implements OnInit {
         );
       },
       error: (err) => {
-        console.error(err);
         this.toastService.showError(
           err.error?.message || MessageConstants.ERROR_TOGGLING_STATUS,
         );
@@ -155,26 +151,45 @@ export class CategoryListComponent implements OnInit {
   }
 
   confirmDelete(): void {
-    if (!this.categoryToDelete || !this.categoryToDelete.id) return;
-    const category = this.categoryToDelete;
-    this.closeDeleteModal();
 
-    this.categoryService.deleteCategory(category.id!).subscribe({
-      next: () => {
-        this.toastService.showSuccess(`Category '${category.name}' ${MessageConstants.CATEGORY_DELETED}`,);
+  if (!this.categoryToDelete || !this.categoryToDelete.id) {
+    return;
+  }
+
+  const category = this.categoryToDelete;
+  this.closeDeleteModal();
+
+  this.categoryService.deleteCategory(category.id!).subscribe({
+
+    next: (response) => {
+
+      if (response.success) {
+
+        // Green popup
+        this.toastService.showSuccess(response.message);
+
         if (this.categories.length === 1 && this.currentPage > 0) {
           this.currentPage--;
         }
-        this.loadCategories();
-      },
-      error: (err) => {
-        console.error(err);
-        const errorMsg = err.error?.message || MessageConstants.CATEGORY_CANNOT_DELETE;
-        this.toastService.showError(errorMsg);
-      },
-    });
-  }
 
+        this.loadCategories();
+
+      } else {
+
+        // Red popup
+        this.toastService.showError(response.message);
+
+      }
+
+    },
+
+    error: () => {
+      this.toastService.showError("Unexpected server error.");
+    }
+
+  });
+
+}
   downloadReportPDF() {
     this.http.get('http://localhost:8080/api/menu-items/print', { responseType: 'blob' })
       .subscribe({
@@ -188,5 +203,7 @@ export class CategoryListComponent implements OnInit {
         }
       });
   }
+
+  
   
 }

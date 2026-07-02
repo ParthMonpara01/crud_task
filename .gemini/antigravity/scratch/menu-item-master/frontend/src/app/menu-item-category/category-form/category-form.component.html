@@ -22,7 +22,7 @@
           <div class="invalid-feedback" *ngIf="name?.touched && name?.invalid">
             <span *ngIf="name?.errors?.['required']">Category name is required.</span>
             <span *ngIf="name?.errors?.['minlength']">Category name must be at least 2 characters.</span>
-            <span *ngIf="name?.errors?.['maxlength']">Category name cannot exceed 50 characters.</span>
+            <span *ngIf="name?.errors?.['maxlength']">Category name cannot exceed 100 characters.</span>
             <span *ngIf="name?.errors?.['pattern']">Whitespace-only values are not allowed.</span>
             <span *ngIf="name?.errors?.['pattern']">Category name can contain only letters and spaces.</span>
           </div>

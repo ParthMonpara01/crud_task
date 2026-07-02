@@ -5,7 +5,7 @@
       <p class="text-muted mb-0 small">Manage food and beverage categories, their status, and details.</p>
     </div>
     <a routerLink="new" class="btn btn-primary d-flex align-items-center shadow-sm">
-      <i class="bi bi-plus-lg me-2"></i>Create Category
+      <i class="bi bi-plus-lg me-2">Create Category</i>
     </a>
   </div>
 
@@ -58,15 +58,20 @@
           <tr *ngFor="let category of categories">
             <td class="fw-semibold text-secondary">#{{ category.id }}</td>
             <td>
-              <span mat-raised-button [matTooltip]="category.name" matTooltipPosition="right">
+              <span class="text-truncate-custom" mat-raised-button [matTooltip]="category.name"
+                matTooltipPosition="right">
 
-                {{ category.name }}
+                {{ category.name | slice:0:30 }}
+                <span *ngIf="category.name.length > 30">...</span>
               </span>
             </td>
             <td>
-              <span mat-raised-button [matTooltip]="category.name" matTooltipPosition="right">
+              <span class="text-muted text-truncate d-inline-block text-truncate-custom"
+                style="max-width: 220px; color: black;"
+                [matTooltip]="category.description || 'No description provided.'" matTooltipPosition="right">
 
-                {{ category.name }}
+                {{ category.description || 'No description provided.' | slice:0:30 }}
+                <span *ngIf="category.name.length > 30">...</span>
               </span>
             </td>
 
@@ -82,7 +87,7 @@
             </td>
             <td class="text-center">
               <div class="d-flex justify-content-center gap-2">
-                <a [routerLink]="['edit', category.id]" class="btn btn-sm btn-outline-primary" [matTooltip]="'Edit'" >
+                <a [routerLink]="['edit', category.id]" class="btn btn-sm btn-outline-primary" [matTooltip]="'Edit'">
                   <i class="bi bi-pencil-fill"></i>
                 </a>
                 <button (click)="openDeleteModal(category)" class="btn btn-sm btn-outline-danger"
@@ -161,8 +166,9 @@
       </div>
       <div class="modal-body p-4">
         <p class="mb-0 fs-6">
-          Are you sure you want to delete category <strong>{{ categoryToDelete?.name }}</strong>? This action cannot be
-          undone.
+          Are you sure you want to delete category
+          <strong class="category-name">{{ categoryToDelete?.name }}</strong>
+          This action cannot be undone.
         </p>
       </div>
       <div class="modal-footer bg-light border-0 py-3">
@@ -174,5 +180,5 @@
 </div>
 
 <button class="btn btn-primary" (click)="downloadReportPDF()">
-    🖨️ Print Data Report
+  🖨️ Print Data Report
 </button>

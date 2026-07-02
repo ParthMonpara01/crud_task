@@ -12,10 +12,14 @@
   cursor: pointer;
 }
 
-.text-truncate {
-  vertical-align: middle;
+.text-truncate-custom {
+    display: inline-block;
+    max-width: 200px;      /* adjust according to your column */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
 }
-
 
 .entity-wrapper {
   position: relative;
@@ -117,4 +121,10 @@
 
 .btn-clear:hover {
   color: #dc3545;
+}
+
+.category-name {
+  white-space: normal !important;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }

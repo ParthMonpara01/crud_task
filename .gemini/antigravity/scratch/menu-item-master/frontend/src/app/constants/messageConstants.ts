@@ -16,7 +16,7 @@ export class MessageConstants {
   static readonly ERROR_DELETE_ITEM = "Error Deleting menu Item"
   static readonly ERROR_UPDATE_MENU_ITEM = "Error updating menu item";
   static readonly ERROR_CREATE_MENU_ITEM = "Error creating menu item";
-  static readonly MENU_ITEM_DELETED = "Menu Item Deleted successfully";
+  static readonly MENU_ITEM_DELETED = "Deleted successfully";
   static readonly ERROR_LOADING_ITEMS = "Error Loading Menu Items";
   static readonly MENU_ITEM_EXISTS = "Menu Item Already Exists.";
 

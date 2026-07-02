@@ -38,7 +38,7 @@ body {
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
 }
 
-/* Premium table styling */
+/*  table styling */
 .table {
   vertical-align: middle;
 }
@@ -110,4 +110,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   white-space: normal !important;
   word-break: break-word !important;
   text-align: left;
+}
+
+.category-name {
+  white-space: normal !important;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }

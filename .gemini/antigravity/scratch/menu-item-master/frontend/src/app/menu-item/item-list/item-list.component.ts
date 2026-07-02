@@ -8,6 +8,7 @@ import { MenuItem } from '../../models/menu-item.model';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { AppConstants } from '../../constants/constants';
 import { MessageConstants } from '../../constants/messageConstants';
+import { FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-item-list',
@@ -17,6 +18,7 @@ import { MessageConstants } from '../../constants/messageConstants';
   styleUrls: ['./item-list.component.css']
 })
 export class ItemListComponent implements OnInit {
+  itemForm!: FormGroup;
   menuItems: MenuItem[] = [];
   
   // Search
@@ -27,10 +29,12 @@ export class ItemListComponent implements OnInit {
   pageSize: number = AppConstants.DEFAULT_PAGE_SIZE;
   totalElements: number = AppConstants.TOTAL_ELEMENT;
   totalPages: number = AppConstants.TOTAL_PAGES;
-  pageSizeOptions = AppConstants.PAGE_SIZE_OPTIONS;  
+  pageSizeOptions = AppConstants.PAGE_SIZE_OPTIONS;
   // Sorting
-  sortColumn: string = 'name';
+  sortColumn: string = AppConstants.SORT_PAGE_COLUMN;
   sortDirection: 'asc' | 'desc' = 'asc';
+  isFormOpen = false;
+  
 
   // Custom Delete Modal State
   showDeleteModal: boolean = false;
@@ -43,15 +47,28 @@ export class ItemListComponent implements OnInit {
 
   ngOnInit(): void {
     const savedPageSize = localStorage.getItem('menuItemPageSize');
+    const setAscDesc = localStorage.getItem('menuItemAscDesc');
+    const setDirection = localStorage.getItem('menuItemDirection')
+    console.log(this.sortDirection)
 
-  this.pageSize = savedPageSize 
-      ? Number(savedPageSize) 
+  this.pageSize = savedPageSize
+      ? Number(savedPageSize)
       : 10;
+  this.sortColumn = setAscDesc
+  ? String (setAscDesc)
+  : this.sortColumn;
 
+  this.sortDirection = setDirection
+  ? String (setDirection) === 'asc' ? 'desc' : 'asc'
+  :this.sortDirection;
+
+  console.log("ngOnInit Sort Direction :- " + this.sortDirection)
+  console.log(setAscDesc)
   this.loadMenuItems();
   }
 
   changePageSize(): void {
+    console.log("ChangePageSize() Method Called....")
 
   this.currentPage = 0;
 
@@ -59,21 +76,35 @@ export class ItemListComponent implements OnInit {
     'menuItemPageSize',
     this.pageSize.toString()
   );
-
   this.loadMenuItems();
+  }
 
-}
+  setAscDesc(): void{
+    console.log("Calling setAscDesc() method")
+    
+    this.currentPage = 0;
+    localStorage.setItem(
+    'menuItemAscDesc',
+    this.sortColumn.toString()
+  );
+    this.loadMenuItems();
+  }
 
   loadMenuItems(): void {
+    console.log("Loading Menu Items After ASC DESC")
     const sortParam = `${this.sortColumn},${this.sortDirection}`;
+    console.log("sort Params : " + sortParam)
     this.menuItemService.getMenuItems(this.currentPage, this.pageSize, sortParam, this.searchTerm).subscribe({
       next: (res) => {
         this.menuItems = res.content || [];
         this.totalElements = res.totalElements || 0;
         this.totalPages = res.totalPages || 0;
+        console.log("Sort Param :" + sortParam)
+        console.log("Loading MenuItems : " + this.menuItems)
+        console.log("Loading total Elements : " +this.totalElements)
+        console.log("Loading total Pages : " +this.totalPages)
       },
       error: (err) => {
-        console.error(err);
         this.toastService.showError(err.error?.message || MessageConstants.ERROR_LOADING_ITEMS);
       }
     });
@@ -85,11 +116,33 @@ export class ItemListComponent implements OnInit {
   }
 
   onSort(column: string): void {
+    console.log("onSort Short Direction : " + this.sortDirection)
+    console.log("Sorting Method Called...!!")
+
+    this.currentPage = 0;
+    localStorage.setItem(
+      'menuItemAscDesc',
+      this.sortColumn.toString()
+    )
+
+    localStorage.setItem(
+      'menuItemDirection',
+      this.sortDirection.toString()
+    )
+    console.log("Sorting Direction : " + this.sortDirection)
+    console.log("Column Name : " + column)
+    console.log("SortColumn..." + this.sortColumn)
     if (this.sortColumn === column) {
+      console.log("Column Name is :- " + column)
       this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+      console.log("SortDirection : " + this.sortDirection)
+      
     } else {
+      console.log("Else Part...!!")
       this.sortColumn = column;
+      console.log("Sorting Column Name : " + this.sortColumn)
       this.sortDirection = 'asc';
+      console.log("End of Else Part..!!!!")
     }
     this.currentPage = 0;
     this.loadMenuItems();
@@ -134,10 +187,14 @@ export class ItemListComponent implements OnInit {
         this.loadMenuItems();
       },
       error: (err) => {
-        console.error(err);
         this.toastService.showError(err.error?.message || MessageConstants.ERROR_DELETE_ITEM);
       }
     });
+  }
+  // 1. Call this when clicking "Create Menu Item" to clear the form
+  createMenuItem(): void {
+    this.isFormOpen = true;
+    this.itemForm.reset(); 
   }
 
 }

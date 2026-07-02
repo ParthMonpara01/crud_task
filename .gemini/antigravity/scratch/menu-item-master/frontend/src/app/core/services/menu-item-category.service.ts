@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { MenuItemCategory } from '../../models/category.model';
 import { ApiCOnstans } from '../../constants/apiConstants';
+import { ApiResponse } from "../../models/api-responce";
 
 @Injectable({
   providedIn: 'root'
@@ -42,9 +43,9 @@ export class MenuItemCategoryService {
     return this.http.put<MenuItemCategory>(`${this.apiUrl}/${id}`, category);
   }
 
-  deleteCategory(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
-  }
+  deleteCategory(id: number): Observable<ApiResponse> {
+  return this.http.delete<ApiResponse>(`${this.apiUrl}/${id}`);
+}
 
   toggleStatus(id: number): Observable<MenuItemCategory> {
     return this.http.patch<MenuItemCategory>(`${this.apiUrl}/${id}/toggle-status`, {});
@@ -60,7 +61,15 @@ export class MenuItemCategoryService {
 
   
 }
-getAllCategories(): Observable<MenuItemCategory[]> {
+getAllCategories(): Observable<any> {
   return this.http.get<MenuItemCategory[]>(this.apiUrl);
+}
+
+getCategoriesForEdit(id: number) {
+
+    return this.http.get<MenuItemCategory[]>(
+        `${this.apiUrl}/edit/${id}`
+    );
+
 }
 }

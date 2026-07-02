@@ -40,6 +40,7 @@ export class CategoryFormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    console.log("Category Form has been Called....!!")
   this.initForm();
 
   const idParam = this.route.snapshot.paramMap.get("id");
@@ -77,7 +78,7 @@ export class CategoryFormComponent implements OnInit {
     },
 
     error: (err) => {
-      console.error(err);
+
     }
 
   });
@@ -122,8 +123,6 @@ export class CategoryFormComponent implements OnInit {
 
     error: (err) => {
 
-      console.error(err);
-
       this.toastService.showError(
         MessageConstants.ERROR_LOADING_CATEGORY
       );
@@ -166,9 +165,7 @@ export class CategoryFormComponent implements OnInit {
     };
 
     if (this.isEditMode && this.categoryId) {
-      this.categoryService
-        .updateCategory(this.categoryId, categoryData)
-        .subscribe({
+      this.categoryService.updateCategory(this.categoryId, categoryData).subscribe({
           next: () => {
             this.toastService.showSuccess(
               `Category '${categoryData.name}' ${MessageConstants.CATEGORY_UPDATED}`,
@@ -177,7 +174,6 @@ export class CategoryFormComponent implements OnInit {
           },
           error: (err) => {
             this.submitting = false;
-            console.error(err);
             this.toastService.showError(
               err.error?.message || MessageConstants.ERROR_UPDATING_CATEGORY,
             );
