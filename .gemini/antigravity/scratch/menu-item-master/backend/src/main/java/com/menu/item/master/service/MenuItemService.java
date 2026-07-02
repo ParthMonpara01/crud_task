@@ -34,6 +34,7 @@ import java.util.Map;
 public class MenuItemService {
 
     private final MenuItemRepository menuItemRepository;
+
     private final MenuItemCategoryRepository categoryRepository;
 
     // Fetch paginated, sorted, and searched menu items
@@ -45,12 +46,14 @@ public class MenuItemService {
                 return cb.conjunction();
             }
             String wildcard = "%" + search.trim().toLowerCase() + "%";
+
             // Searching on name, slogan, description and category name
             return cb.or(
                     cb.like(cb.lower(root.get("name")), wildcard),
                     cb.like(cb.lower(root.get("slogan")), wildcard),
                     cb.like(cb.lower(root.get("description")), wildcard),
-                    cb.like(cb.lower(root.join("menuItemCategory").get("name")), wildcard)
+                    cb.like(cb.lower(root.join("menuItemCategory").get("name")), wildcard),
+                    cb.like(cb.lower(root.join("menuItemCategory").get("description")), wildcard)
             );
         };
 
@@ -139,11 +142,12 @@ public class MenuItemService {
     @Transactional
     public void deleteMenuItem(Long id) {
 
-        if (!menuItemRepository.existsById(id)) {
+        MenuItem item = menuItemRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Menu item not found with id: " + id));
 
-            throw new ResourceNotFoundException("Menu item not found with id: " + id);
-        }
-        menuItemRepository.deleteById(id);
+        menuItemRepository.delete(item);
     }
 
     // Convert Entity to DTO
@@ -173,9 +177,21 @@ public class MenuItemService {
         if (dto.getPrice().compareTo(BigDecimal.ZERO) <= 0) {
             throw new BusinessValidationException("Price must be greater than 0.");
         }
+        if(dto.getPrice().compareTo(new BigDecimal("99999")) > 0){
+
+            throw new BusinessValidationException(
+                    "Price cannot exceed 99999.");
+        }
         if (dto.getMenuItemCategoryId() == null) {
 
             throw new BusinessValidationException("Category selection is mandatory.");
+        }
+        if(dto.getDescription()!=null &&
+                dto.getDescription().length()>250){
+
+            throw new BusinessValidationException(
+                    "Description cannot exceed 250 characters."
+            );
         }
     }
 

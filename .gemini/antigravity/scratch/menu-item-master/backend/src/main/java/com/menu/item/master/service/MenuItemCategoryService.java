@@ -4,12 +4,15 @@ package com.menu.item.master.service;
  * This is the Service Layer file which handles Business logic to fetch data for MenuItemCategoryService
  */
 
+import com.menu.item.master.dto.ApiResponse;
 import com.menu.item.master.dto.MenuItemCategoryDto;
+import com.menu.item.master.entity.MenuItem;
 import com.menu.item.master.entity.MenuItemCategory;
 import com.menu.item.master.exception.BusinessValidationException;
 import com.menu.item.master.exception.ResourceNotFoundException;
 import com.menu.item.master.repository.MenuItemCategoryRepository;
 import com.menu.item.master.repository.MenuItemRepository;
+import jakarta.persistence.criteria.Join;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +20,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,14 +35,18 @@ public class MenuItemCategoryService {
     @Transactional(readOnly = true)
     public Page<MenuItemCategoryDto> getCategories(String search, Pageable pageable) {
 
+
         Specification<MenuItemCategory> spec = (root, query, cb) -> {
+            Join<MenuItemCategory,MenuItem > menuItemJoin = root.join("menuItem");
             if (search == null || search.trim().isEmpty()) {
                 return cb.conjunction();
             }
             String wildcard = "%" + search.trim().toLowerCase() + "%";
             return cb.or(
                     cb.like(cb.lower(root.get("name")), wildcard),
-                    cb.like(cb.lower(root.get("description")), wildcard)
+                    cb.like(cb.lower(root.get("description")), wildcard),
+                    cb.like(cb.lower(root.get("slogan")), wildcard),
+                    cb.like(cb.lower(menuItemJoin.get("slogan")), wildcard)
             );
         };
 
@@ -109,20 +117,23 @@ public class MenuItemCategoryService {
 
     // Delete a category
     @Transactional
-    public void deleteCategory(Long id) {
+    public ApiResponse deleteCategory(Long id) {
 
-        if (!categoryRepository.existsById(id)) {
+        MenuItemCategory category = categoryRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Category not found"));
 
-            throw new ResourceNotFoundException("Category not found with id: " + id);
+        if (menuItemRepository.existsByMenuItemCategory(category)) {
+            return new ApiResponse(
+                    false,
+                    "Cannot delete category because it is already in use.");
         }
 
-        // Business Rule: Block deletion if category is assigned to menu items
-        if (menuItemRepository.existsByMenuItemCategoryId(id)) {
+        categoryRepository.delete(category);
 
-            throw new BusinessValidationException("Category cannot be deleted because it is already assigned to menu items.");
-        }
-
-        categoryRepository.deleteById(id);
+        return new ApiResponse(
+                true,
+                "Category deleted successfully.");
     }
 
     // Toggle active status
@@ -147,7 +158,6 @@ public class MenuItemCategoryService {
                 .build();
     }
 
-    // Basic DTO validations
     private void validateDto(MenuItemCategoryDto dto) {
 
         if (dto.getName() == null || dto.getName().trim().isEmpty()) {
@@ -159,4 +169,24 @@ public class MenuItemCategoryService {
         return categoryRepository.existsByNameIgnoreCase(name);
     }
 
+    public List<MenuItemCategory> getCategoriesForEdit(Long menuItemId) {
+
+        // Fetch the Menu Item
+        MenuItem menuItem = menuItemRepository.findById(menuItemId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Menu Item not found"));
+
+        // Get all active categories
+        List<MenuItemCategory> categories = categoryRepository.findByActiveTrue();
+
+        // Get currently selected category
+        MenuItemCategory selectedCategory = menuItem.getMenuItemCategory();
+
+        // If selected category is inactive, add it
+        if (!selectedCategory.getActive()) {
+            categories.add(selectedCategory);
+        }
+
+        return categories;
+    }
 }

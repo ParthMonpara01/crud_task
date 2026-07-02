@@ -5,9 +5,7 @@ package com.menu.item.master.entity;
  */
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.*;
 import java.math.BigDecimal;
 
@@ -25,17 +23,29 @@ public class MenuItem {
     private Long id;
 
     @Column(nullable = false, unique = true)
+    @Pattern(
+            regexp = "^[A-Za-z ]+$",
+            message = "Name can contain only letters and spaces."
+    )
     private String name;
 
+    @Size(
+            max = 100,
+            message = "Slogan cannot exceed 100 characters."
+    )
     private String slogan;
 
     @Column(columnDefinition = "TEXT")
+    @Size(
+            max = 250,
+            message = "Description cannot exceed 250 characters."
+    )
     private String description;
 
     @Column(nullable = false, precision = 10, scale = 2)
     @NotNull
-    @Min(1)
-    @Max(99999)
+    @DecimalMin(value = "0.01", message = "Minimum value can be 0.01")
+    @DecimalMax(value = "99999.99", message = "Maximum value could be 99999.99")
     private BigDecimal price;
 
     @ManyToOne(fetch = FetchType.EAGER)

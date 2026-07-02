@@ -4,10 +4,7 @@ package com.menu.item.master.dto;
  * This is the file to send Data Transfer Objects to send only necessary data to the Frontend for MenuItem
  */
 
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -23,10 +20,22 @@ public class MenuItemDto {
 
     @NotBlank(message = "Menu item name is required")
     @Size(min = 2, max = 100, message = "Menu item name must be between 2 and 100 characters")
+    @Pattern(
+            regexp = "^[A-Za-z ]+$",
+            message = "Name can contain only letters and spaces."
+    )
     private String name;
 
+    @Size(
+            max = 100,
+            message = "Slogan cannot exceed 100 characters."
+    )
     private String slogan;
 
+    @Size(
+            max = 250,
+            message = "Description cannot exceed 250 characters."
+    )
     private String description;
 
     @NotNull(message = "Price is required")

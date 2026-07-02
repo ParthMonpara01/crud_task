@@ -15,10 +15,10 @@ import java.util.Optional;
 @Repository
 public interface MenuItemCategoryRepository extends JpaRepository<MenuItemCategory, Long>, JpaSpecificationExecutor<MenuItemCategory> {
 
-    Optional<MenuItemCategory> findByName(String name);
     boolean existsByName(String name);
     boolean existsByNameAndIdNot(String name, Long id);
     List<MenuItemCategory> findByActiveTrue();
     boolean existsByNameIgnoreCase(String name);
+    List<MenuItemCategory> findAllByOrderByNameAsc();
 
 }

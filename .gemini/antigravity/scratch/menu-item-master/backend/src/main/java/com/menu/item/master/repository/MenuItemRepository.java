@@ -5,6 +5,7 @@ package com.menu.item.master.repository;
  */
 
 import com.menu.item.master.entity.MenuItem;
+import com.menu.item.master.entity.MenuItemCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
@@ -20,5 +21,6 @@ public interface MenuItemRepository extends JpaRepository<MenuItem, Long>, JpaSp
     boolean existsByNameAndIdNot(String name, Long id);
     boolean existsByMenuItemCategoryId(Long categoryId);
     boolean existsByNameIgnoreCase(String name);
+    boolean existsByMenuItemCategory(MenuItemCategory menuItemCategory);
 
 }

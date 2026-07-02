@@ -20,7 +20,7 @@ public class CorsConfig {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
 
-				System.out.println("CorsConfig called......");
+
 				registry.addMapping("/**")
 						.allowedOriginPatterns("*")
 						.allowedMethods("*")

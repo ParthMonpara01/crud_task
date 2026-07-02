@@ -4,7 +4,9 @@ package com.menu.item.master.controller;
  * This is the Controller file to handle MenuItemCategory API Request From Frontend to backend
  */
 
+import com.menu.item.master.dto.ApiResponse;
 import com.menu.item.master.dto.MenuItemCategoryDto;
+import com.menu.item.master.entity.MenuItemCategory;
 import com.menu.item.master.repository.MenuItemCategoryRepository;
 import com.menu.item.master.service.MenuItemCategoryService;
 import jakarta.validation.Valid;
@@ -36,6 +38,7 @@ public class MenuItemCategoryController {
     public ResponseEntity<Page<MenuItemCategoryDto>> getCategories(
             @RequestParam(value = "search", required = false) String search,
             @PageableDefault(size = 5, sort = "name", direction = Sort.Direction.ASC) Pageable pageable) {
+        System.out.println("Get Categories method called..");
 
         Page<MenuItemCategoryDto> categories = categoryService.getCategories(search, pageable);
         return ResponseEntity.ok(categories);
@@ -76,12 +79,12 @@ public class MenuItemCategoryController {
 
     }
 
-    // DELETE /api/categories/{id}
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
-        System.out.println("Delete maping testing");
-        categoryService.deleteCategory(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<ApiResponse> deleteCategory(@PathVariable Long id) {
+
+        ApiResponse response = categoryService.deleteCategory(id);
+
+        return ResponseEntity.ok(response);
     }
 
     // PATCH /api/categories/{id}/toggle-status
@@ -96,6 +99,13 @@ public class MenuItemCategoryController {
     public ResponseEntity<Boolean> checkName( @RequestParam String name) {
         boolean exists = menuItemCategoryRepository.existsByNameIgnoreCase(name);
         return ResponseEntity.ok(exists);
+    }
+
+    @GetMapping("/edit/{menuItemId}")
+    public ResponseEntity<List<MenuItemCategory>> getCategoriesForEdit(
+            @PathVariable Long menuItemId) {
+
+        return ResponseEntity.ok(categoryService.getCategoriesForEdit(menuItemId));
     }
 
 }
